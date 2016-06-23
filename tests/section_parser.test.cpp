@@ -66,4 +66,23 @@ SCENARIO( "Section parser", "[parser,section]" )
             }
         }
     }
+
+    GIVEN( "A string containing a section and the start of it's contents" )
+    {
+        const std::string log( "--1dc01a0d-A--\np" );
+
+        WHEN( "the parser is invoked" )
+        {
+            vmod::Section section;
+            auto itr_begin = log.begin();
+            auto itr_end   = log.end();
+
+            bool result = section.parse( itr_begin, itr_end );
+
+            THEN( "result should be false" )
+            {
+                REQUIRE( *itr_begin == 'p' );
+            }
+        }
+    }
 }
