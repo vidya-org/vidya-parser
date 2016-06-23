@@ -34,13 +34,14 @@ namespace vidya
                 auto first = itr_begin;
 
                 // --1dc01a0d-A--
-                bool result = phrase_parse( itr_begin,
-                                            itr_end,
-                                            repeat( 2, 2 )[lit( '-' )] >> +alnum >>
-                                                lit( '-' ) >> char_,
-                                            space,
-                                            hash,
-                                            name );
+                bool result =
+                    phrase_parse( itr_begin,
+                                  itr_end,
+                                  repeat( 2, 2 )[lit( '-' )] >> +alnum >> lit( '-' ) >>
+                                      char_ >> repeat( 2, 2 )[lit( '-' )],
+                                  space,
+                                  hash,
+                                  name );
 
                 if( first == itr_begin )
                 {

@@ -43,9 +43,26 @@ SCENARIO( "Section parser", "[parser,section]" )
 
             THEN( "should parse name" )
             {
-                CAPTURE( section.hash );
-                CAPTURE( section.name );
                 REQUIRE( section.name == 'A' );
+            }
+        }
+    }
+
+    GIVEN( "A string missing the last two dashes" )
+    {
+        const std::string log( "--1dc01a0d-A\n" );
+
+        WHEN( "the parser is invoked" )
+        {
+            vmod::Section section;
+            auto itr_begin = log.begin();
+            auto itr_end   = log.end();
+
+            bool result = section.parse( itr_begin, itr_end );
+
+            THEN( "result should be false" )
+            {
+                REQUIRE( result == false );
             }
         }
     }
