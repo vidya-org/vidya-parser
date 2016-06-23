@@ -54,14 +54,14 @@ LINKFLAGS = $(TESTFLAGS)
 #--------------------------------------------------------------------------
 # ======== main ========
 MAINDIR = src
-
 UTILSDIR = utils
+MODSECLOGDIR = src/modseclog
 
 ifeq ($(MAKECMDGOALS),test)
 	TESTSDIR = tests
-	_ALLSRCDIRLIST = $(MAINDIR) $(UTILSDIR) $(TESTSDIR)
+	_ALLSRCDIRLIST = $(MAINDIR) $(MODSECLOGDIR) $(UTILSDIR) $(TESTSDIR)
 else
-	_ALLSRCDIRLIST = $(MAINDIR) $(UTILSDIR)
+	_ALLSRCDIRLIST = $(MAINDIR) $(MODSECLOGDIR) $(UTILSDIR)
 endif
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -95,6 +95,7 @@ ifeq ($(MAKECMDGOALS),exec)
 endif
 
 UTILSFILES = $(wildcard $(UTILSDIR)/*.cpp)
+MODSECLOGFILES = $(wildcard $(MODSECLOGDIR)/*.cpp)
 HELPERSFILES = $(wildcard $(HELPERSDIR)/*.cpp)
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -103,23 +104,26 @@ HELPERSFILES = $(wildcard $(HELPERSDIR)/*.cpp)
 #   Dependencias dos .o
 MAINDEPS := $(addprefix $(MAINDIR)/$(DEPDIR)/,$(patsubst %.cpp,%.d,$(notdir $(MAINFILES))))
 UTILSDEPS := $(addprefix $(UTILSDIR)/$(DEPDIR)/,$(patsubst %.cpp,%.d,$(notdir $(UTILSFILES))))
+MODSECLOGDEPS := $(addprefix $(MODSECLOGDIR)/$(DEPDIR)/,$(patsubst %.cpp,%.d,$(notdir $(MODSECLOGFILES))))
 TESTSDEPS := $(addprefix $(TESTSDIR)/$(DEPDIR)/,$(patsubst %.cpp,%.d,$(notdir $(TESTSFILES))))
 
 #   Dependencias dos .d
 MAINDEPDEPS := $(subst .d,$(DEPSUFFIX).d,$(MAINDEPS))
 UTILSDEPDEPS := $(subst .d,$(DEPSUFFIX).d,$(UTILSDEPS))
+MODSECLOGDEPDEPS := $(subst .d,$(DEPSUFFIX).d,$(MODSECLOGDEPS))
 TESTSDEPDEPS := $(subst .d,$(DEPSUFFIX).d,$(TESTSDEPS))
 
-ALLDEPDEPS :=	$(MAINDEPDEPS) $(UTILSDEPDEPS) $(TESTSDEPDEPS)
+ALLDEPDEPS :=	$(MAINDEPDEPS) $(MODSECLOGDEPDEPS) $(UTILSDEPDEPS) $(TESTSDEPDEPS)
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Object Lists
 #--------------------------------------------------------------------------
 MAINOBJS := $(addprefix $(MAINDIR)/$(OBJDIR)/,$(patsubst %.cpp,%.o,$(notdir $(MAINFILES))))
 UTILSOBJS := $(addprefix $(UTILSDIR)/$(OBJDIR)/,$(patsubst %.cpp,%.o,$(notdir $(UTILSFILES))))
+MODSECLOGOBJS := $(addprefix $(MODSECLOGDIR)/$(OBJDIR)/,$(patsubst %.cpp,%.o,$(notdir $(MODSECLOGFILES))))
 TESTSOBJS := $(addprefix $(TESTSDIR)/$(OBJDIR)/,$(patsubst %.cpp,%.o,$(notdir $(TESTSFILES))))
 
-ALLOBJS :=	$(MAINOBJS) $(UTILSOBJS) $(TESTSOBJS)
+ALLOBJS := $(TESTSOBJS) $(MAINOBJS) $(MODSECLOGOBJS) $(UTILSOBJS)
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Executable
@@ -156,9 +160,10 @@ exec: rmexec allobjs FORCE | $(BINDIR)
 	@echo -e '=----------------------------------------------------=\n\n'
 
 test: compiletest
+	@echo -e '$(ALLOBJS)'
 	@echo -e 'Executing tests...\n'
 	@set -e;./$(BINDIR)/$(TESTEXEC)
-	# @set -e;./$(BINDIR)/$(TESTEXEC) --log_level=message --build_info=yes --show_progress=true
+# @set -e;./$(BINDIR)/$(TESTEXEC) --log_level=message --build_info=yes --show_progress=true
 
 compiletest: rmtest allobjs FORCE | $(BINDIR)
 	$(CC) $(ALLOBJS) $(ALLCOMPFLAGS) -o $(BINDIR)/$(TESTEXEC) $(LINKFLAGS)
