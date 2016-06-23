@@ -38,7 +38,9 @@ LIBDIR = -L/usr/lib
 
 GENERALSTARTFLAGS = -Wall -std=c++14
 
-ALLCOMPFLAGS = $(GENERALSTARTFLAGS)
+LIBRARYDIRS = -I./vendor
+
+ALLCOMPFLAGS = $(GENERALSTARTFLAGS) $(LIBRARYDIRS)
 
 #LINKFLAGS = -lboost_filesystem -lboost_system
 ifeq ($(MAKECMDGOALS),test)
@@ -155,7 +157,8 @@ exec: rmexec allobjs FORCE | $(BINDIR)
 
 test: compiletest
 	@echo -e 'Executing tests...\n'
-	@set -e;./$(BINDIR)/$(TESTEXEC) --log_level=message --build_info=yes --show_progress=true
+	@set -e;./$(BINDIR)/$(TESTEXEC)
+	# @set -e;./$(BINDIR)/$(TESTEXEC) --log_level=message --build_info=yes --show_progress=true
 
 compiletest: rmtest allobjs FORCE | $(BINDIR)
 	$(CC) $(ALLOBJS) $(ALLCOMPFLAGS) -o $(BINDIR)/$(TESTEXEC) $(LINKFLAGS)
