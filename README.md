@@ -2,6 +2,8 @@
 
 Vidya's modsecurity log parser
 
+*work in progress*
+
 ## Thanks
 
 ### Original team (IPe)
